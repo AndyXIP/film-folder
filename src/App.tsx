@@ -1,121 +1,71 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { SearchResults } from './components/SearchResults'
+import type { Movie } from './types'
 import './App.css'
 
+const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL
+const TOKEN = import.meta.env.VITE_TMDB_API_READ_TOKEN
+
+async function searchMovies(query: string): Promise<Movie[]> {
+  const res = await fetch(
+    `${BASE_URL}/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=1`,
+    {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+        accept: 'application/json',
+      },
+    },
+  )
+  if (!res.ok) throw new Error('Search failed')
+  const data = await res.json()
+  return data.results as Movie[]
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [query, setQuery] = useState('')
+  const [movies, setMovies] = useState<Movie[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [searched, setSearched] = useState(false)
+
+  async function search() {
+    if (!query.trim()) return
+    setLoading(true)
+    setError(null)
+    setSearched(true)
+    try {
+      const results = await searchMovies(query)
+      setMovies(results)
+    } catch {
+      setError('Failed to fetch movies. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
+    <div id="app">
+      <h1>Film Folder</h1>
+      <form
+        onSubmit={e => { e.preventDefault(); void search() }}
+        className="search-form"
+      >
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Search for a movie..."
+          className="search-input"
+        />
+        <button type="submit" className="search-btn" disabled={loading}>
+          {loading ? 'Searching…' : 'Search'}
         </button>
-      </section>
+      </form>
 
-      <div className="ticks"></div>
+      {error && <p className="error">{error}</p>}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <SearchResults movies={movies} searched={searched && !loading} />
+    </div>
   )
 }
 
