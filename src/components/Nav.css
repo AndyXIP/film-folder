@@ -1,0 +1,25 @@
+.nav {
+  display: flex;
+  gap: 4px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-link {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 15px;
+  text-decoration: none;
+  color: var(--text);
+  transition: color 0.2s, background 0.2s;
+
+  &:hover {
+    color: var(--text-h);
+    background: var(--social-bg);
+  }
+
+  &.active {
+    color: var(--accent);
+    background: var(--accent-bg);
+  }
+}

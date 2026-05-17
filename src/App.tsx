@@ -1,59 +1,48 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router'
 import { SearchResults } from './components/SearchResults'
+import { searchMovies } from './api/tmdb'
 import type { Movie } from './types'
 import './App.css'
 
-const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL
-const TOKEN = import.meta.env.VITE_TMDB_API_READ_TOKEN
-
-async function searchMovies(query: string): Promise<Movie[]> {
-  const res = await fetch(
-    `${BASE_URL}/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=1`,
-    {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        accept: 'application/json',
-      },
-    },
-  )
-  if (!res.ok) throw new Error('Search failed')
-  const data = await res.json()
-  return data.results as Movie[]
-}
-
 function App() {
-  const [query, setQuery] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const query = searchParams.get('q') ?? ''
+
+  const [input, setInput] = useState(query)
   const [movies, setMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [searched, setSearched] = useState(false)
 
-  async function search() {
-    if (!query.trim()) return
-    setLoading(true)
-    setError(null)
-    setSearched(true)
-    try {
-      const results = await searchMovies(query)
-      setMovies(results)
-    } catch {
-      setError('Failed to fetch movies. Please try again.')
-    } finally {
-      setLoading(false)
-    }
+  useEffect(() => {
+    if (!query) return
+    ;(async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        setMovies(await searchMovies(query))
+      } catch {
+        setError('Failed to fetch movies. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [query])
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (!input.trim()) return
+    setSearchParams({ q: input.trim() })
   }
 
   return (
     <div id="app">
       <h1>Film Folder</h1>
-      <form
-        onSubmit={e => { e.preventDefault(); void search() }}
-        className="search-form"
-      >
+      <form onSubmit={handleSubmit} className="search-form">
         <input
           type="text"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
+          value={input}
+          onChange={e => setInput(e.target.value)}
           placeholder="Search for a movie..."
           className="search-input"
         />
@@ -64,7 +53,7 @@ function App() {
 
       {error && <p className="error">{error}</p>}
 
-      <SearchResults movies={movies} searched={searched && !loading} />
+      <SearchResults movies={movies} searched={!!query && !loading} />
     </div>
   )
 }

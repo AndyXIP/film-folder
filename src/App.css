@@ -68,6 +68,10 @@
   background: var(--social-bg);
   transition: box-shadow 0.2s;
   text-align: left;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  cursor: pointer;
 
   &:hover {
     box-shadow: var(--shadow);

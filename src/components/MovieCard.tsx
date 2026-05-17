@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import type { Movie } from '../types'
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
 
 export function MovieCard({ movie }: Props) {
   return (
-    <div className="movie-card">
+    <Link to={`/movie/${movie.id}`} className="movie-card">
       {movie.poster_path ? (
         <img
           src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -24,6 +25,6 @@ export function MovieCard({ movie }: Props) {
         </div>
         <p className="overview">{movie.overview || 'No description available.'}</p>
       </div>
-    </div>
+    </Link>
   )
 }

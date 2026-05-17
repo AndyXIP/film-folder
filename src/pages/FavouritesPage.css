@@ -1,0 +1,142 @@
+#fav-page {
+  padding: 32px 24px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cards-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  margin-bottom: 32px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  align-items: flex-start;
+}
+
+.add-list-btn {
+  flex-shrink: 0;
+  width: 220px;
+  aspect-ratio: unset;
+  min-height: 200px;
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text);
+  font-size: 14px;
+  transition: border-color 0.2s, color 0.2s;
+
+  span {
+    font-size: 28px;
+    color: var(--border);
+    transition: color 0.2s;
+  }
+
+  &:hover {
+    border-color: var(--accent-border);
+    color: var(--accent);
+
+    span {
+      color: var(--accent);
+    }
+  }
+}
+
+.search-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.fav-message {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.fav-message.error {
+  color: #ef4444;
+}
+
+.fav-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 480px;
+}
+
+.fav-result-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow 0.2s, opacity 0.2s;
+  position: relative;
+  width: 100%;
+
+  &:hover:not(:disabled) {
+    box-shadow: var(--shadow);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  &.added {
+    border-color: var(--accent);
+  }
+}
+
+.fav-result-poster {
+  width: 44px;
+  height: 66px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.fav-result-no-poster {
+  background: var(--code-bg);
+}
+
+.fav-result-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.fav-result-title {
+  font-size: 15px;
+  color: var(--text-h);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fav-result-year {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.fav-result-check {
+  color: var(--accent);
+  font-size: 16px;
+  flex-shrink: 0;
+}
