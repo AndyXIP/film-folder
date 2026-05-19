@@ -18,6 +18,9 @@
 }
 
 .favourites-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 12px;
   min-height: 28px;
 }
@@ -30,6 +33,35 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.list-delete-btn {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+
+  .favourites-card:hover & {
+    opacity: 1;
+  }
+
+  &:hover {
+    background: var(--border);
+    color: var(--text-h);
+  }
 }
 
 .favourites-name-input {

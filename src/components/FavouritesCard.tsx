@@ -8,9 +8,10 @@ interface Props {
   onSelect: () => void
   onRename: (name: string) => void
   onRemove: (movieId: number) => void
+  onDelete: () => void
 }
 
-export function FavouritesCard({ list, isSelected, onSelect, onRename, onRemove }: Props) {
+export function FavouritesCard({ list, isSelected, onSelect, onRename, onRemove, onDelete }: Props) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(list.name)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -44,10 +45,18 @@ export function FavouritesCard({ list, isSelected, onSelect, onRename, onRemove 
             autoFocus
           />
         ) : (
-          <h2 className="favourites-name" onDoubleClick={startEditing} title="Double-click to rename">
+          <h2 className="favourites-name" onClick={startEditing} title="Click to rename">
             {list.name}
           </h2>
         )}
+        <button
+          className="list-delete-btn"
+          onClick={e => { e.stopPropagation(); onDelete() }}
+          aria-label={`Delete ${list.name}`}
+          title="Delete list"
+        >
+          ×
+        </button>
       </div>
       <div className="favourites-grid">
         {list.slots.map((movie, i) => (

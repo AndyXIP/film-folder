@@ -15,8 +15,16 @@ export function FavouritesPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { lists, addList, renameList, addMovie, removeMovie } = useFavourites()
+  const { lists, addList, renameList, addMovie, removeMovie, deleteList } = useFavourites()
   const [selectedId, setSelectedId] = useState<string>(() => lists[0]?.id ?? '')
+
+  function handleDeleteList(id: string) {
+    deleteList(id)
+    if (selectedId === id) {
+      const next = lists.find(l => l.id !== id)
+      setSelectedId(next?.id ?? '')
+    }
+  }
 
   const selectedList = lists.find(l => l.id === selectedId) ?? lists[0]
   const isFull = selectedList?.slots.every(m => m !== null) ?? false
@@ -54,6 +62,7 @@ export function FavouritesPage() {
             onSelect={() => setSelectedId(list.id)}
             onRename={name => renameList(list.id, name)}
             onRemove={movieId => removeMovie(list.id, movieId)}
+            onDelete={() => handleDeleteList(list.id)}
           />
         ))}
         <button className="add-list-btn" onClick={addList}>

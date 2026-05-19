@@ -52,5 +52,9 @@ export function useFavourites() {
     ))
   }
 
-  return { lists, addList, renameList, addMovie, removeMovie }
+  function deleteList(id: string) {
+    setLists(prev => prev.filter(l => l.id !== id))
+  }
+
+  return { lists, addList, renameList, addMovie, removeMovie, deleteList }
 }
